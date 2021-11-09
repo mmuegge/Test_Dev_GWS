@@ -1,0 +1,103 @@
+﻿<!-- Strom-View -->
+@model GWS_MVC.Models.StromModel;
+@using System.Globalization;
+@using GWS_MVC.Controllers;
+
+@{
+    ViewData["Title"] = "Strom";
+}
+
+<h1>Strom</h1>
+
+<form method="post" action="@Url.Action("SpeicherDaten", "Strom")">
+
+    <div>
+        <label>Anbieter</label>
+        @Html.DropDownListFor(m => m.Id, new SelectList(Model.AnbieterDaten, "Id", "Anbieter"), new { @name = "AnbieterDaten" })
+    </div>
+    <div>
+        <label>Ablesedatum</label>
+        @(Html.TextBoxFor(m => m.Ablesedatum, "{0:yyyy-MM-dd}", new { Name = "Ablesedatum", type = "date", required = "required" }))
+    </div>
+    <div>
+        <label>Zählerstand</label>
+        <input asp-for="Zaehlerstand" style="width:150px" pattern="\d*\," min="0.0" step="0.001" placeholder="Eingabe" required />
+    </div>
+    <div>
+        <label>Uhrzeit</label>
+        @(Html.TextBoxFor(m => m.Ableseuhrzeit, "{0:HH:mm}", new { id = "Ableseuhrzeit", Name = "Ableseuhrzeit", type = "time", required = "required" }))
+    </div>
+    <div>
+        <label>Aussentemperatur</label>
+        <input asp-for="Aussentemperatur" id="AussenTemp" type="number" name="Aussentemperatur" pattern="\d*" min="-100" max="100" placeholder="Eingabe" required />
+        <label>°C</label>
+    </div>
+    <div>
+        <label>Innentemperatur</label>
+        <input asp-for="Innentemperatur" id="InnenTemp" type="number" name="Innentemperatur" pattern="\d*" min="-100" max="100" placeholder="Eingabe" required />
+        <label>°C</label>
+    </div>
+    <div>
+        <label>Bemerkung</label>
+        <input asp-for="Bemerkung" id="Bemerkung" type="text" name="Bemerkung" />
+    </div>
+
+    <br>
+    <br>
+
+    <input type="submit" value="Speichern" />
+</form>
+
+
+@section Scripts  {
+
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/jquery.preloaders.js"></script>
+
+    <script type="text/javascript">
+       
+        @if (!String.IsNullOrEmpty((string)ViewBag.Message))
+        {
+            <text>
+        zeigeFehlermeldung('@ViewBag.Message');
+            </text>
+        }
+
+        $(document).ready(function () {
+            document.getElementById("AussenTemp").disabled = true;
+            document.getElementById("InnenTemp").disabled = true;
+            console.debug("Dokument ist fertig!");
+            $.preloader.start();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetViewData", "Strom")',
+                success: successFunc,
+                error: errorFunc
+            });
+
+            function successFunc(result) {
+                console.log("result ok")
+                console.log(result);
+
+                document.getElementById("AussenTemp").disabled = false;
+                document.getElementById("InnenTemp").disabled = false;
+
+                $("#InnenTemp").val(result.innentemperatur);
+                $("#AussenTemp").val(result.aussentemperatur);
+                $.preloader.stop();
+
+            }
+
+            function errorFunc(result) {
+                alert("keine Verbindung");
+                console.debug("error");
+            }
+        });
+
+        function zeigeFehlermeldung(meldung) {
+               alert(meldung);
+        }
+
+    </script>
+}

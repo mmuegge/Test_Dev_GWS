@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\HP_MM\source\repos\GWS_INPUT</_PublishTargetUrl>
+    <History>True|2021-06-26T07:11:00.3968126Z;True|2021-06-25T10:55:14.0152987+02:00;True|2021-06-25T10:27:25.2793960+02:00;True|2021-06-25T10:16:28.9949513+02:00;True|2021-06-25T10:12:42.3824385+02:00;True|2021-06-25T10:03:35.6834857+02:00;True|2021-06-24T17:43:50.0951965+02:00;True|2021-06-06T13:48:05.8521766+02:00;True|2021-06-06T13:47:42.5712839+02:00;True|2021-06-06T13:37:45.6065236+02:00;True|2021-06-06T13:33:36.7915198+02:00;True|2021-06-06T13:28:34.0408716+02:00;True|2021-06-06T13:03:54.6450216+02:00;True|2021-06-06T12:58:41.0398633+02:00;True|2021-06-06T08:36:29.0227896+02:00;True|2021-06-06T08:34:05.9537113+02:00;True|2021-06-05T15:23:01.2775143+02:00;</History>
+  </PropertyGroup>
+</Project>

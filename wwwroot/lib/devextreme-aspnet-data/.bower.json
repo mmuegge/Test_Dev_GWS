@@ -1,0 +1,28 @@
+{
+  "name": "devextreme-aspnet-data",
+  "description": "DevExtreme data layer extension for ASP.NET",
+  "authors": [
+    "Developer Express Inc."
+  ],
+  "license": "MIT",
+  "ignore": [
+    "*",
+    "!LICENSE",
+    "!js/*"
+  ],
+  "main": [
+    "js/dx.aspnet.data.js"
+  ],
+  "homepage": "https://github.com/DevExpress/DevExtreme.AspNet.Data",
+  "version": "2.4.4",
+  "_release": "2.4.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.4.4",
+    "commit": "8f0aae9a43e5b417ee1370e911ec657e2b302954"
+  },
+  "_source": "https://github.com/DevExpress/DevExtreme.AspNet.Data.git",
+  "_target": "2.4.4",
+  "_originalSource": "devextreme-aspnet-data",
+  "_direct": true
+}

@@ -1,0 +1,250 @@
+﻿<!-- Gas-View -->
+@model GWS_MVC.Models.GasModel;
+@using System.Globalization;
+@using GWS_MVC.Controllers;
+
+@{
+    ViewData["Title"] = "Gas";
+    Boolean istHeute = Model.Ablesedatum.ToShortDateString() == DateTime.Now.ToShortDateString() ? true : false;    //prüfen ob akt. Ablesetag == DateTimeNow?
+    string datenGespeichert = (string)ViewBag.Datengespeichert;
+
+}
+
+@if (TempData["Success"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            console.debug("Toastr");
+            toastr.success("@TempData["Success"]");
+        };
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            console.debug("Toastr");
+            toastr.error("@TempData["Error"]");
+        };
+    </script>
+}
+
+<h1>Gas</h1>
+
+<form method="post" action="@Url.Action("SpeicherDaten", "Gas")" id="form">
+
+    <table>
+        <tr>
+            <td>Anbieter</td>
+            <td>
+                @Html.DropDownListFor(m => m.Id, new SelectList(Model.AnbieterDaten, "Id", "Anbieter"), new { @name = "AnbieterDaten" })
+            </td>
+        </tr>
+
+        <tr>
+            <td> Ablesedatum</td>
+            <td>
+                @(Html.TextBoxFor(m => m.Ablesedatum, "{0:yyyy-MM-dd}", new { id = "Ablesedatum", Name = "Ablesedatum", type = "date", required = "required" }))
+            </td>
+        </tr>
+
+        <tr>
+            <td>Zählerstand&nbsp[m3]&nbsp</td>
+            <td>
+                <input asp-for="Zaehlerstand" id="idZaehlerstand" value="" style="width:150px" pattern="\d*\," min="0.0" step="0.001" placeholder="Zählerstand" required />
+            </td>
+        </tr>
+
+        <tr>
+            <td>Uhrzeit</td>
+            <td>
+                @(Html.TextBoxFor(m => m.Ableseuhrzeit, "{0:HH:mm}", new { id = "Ableseuhrzeit", Name = "Ableseuhrzeit", type = "time", required = "required" }))
+            </td>
+        </tr>
+
+        <tr>
+            <td>Aussentemperatur&nbsp[°C]&nbsp</td>
+            <td>
+                <div id="idAussentemp">
+                    <input asp-for="Aussentemperatur" id="AussenTemp" type="number" name="Aussentemperatur" pattern="\d*" min="-100" max="100" placeholder="Eingabe" required />
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Innentemperatur&nbsp[°C]&nbsp</td>
+            <td>
+                <div id="idInnentemp">
+                    <input asp-for="Innentemperatur" id="InnenTemp" type="number" name="Innentemperatur" pattern="\d*" min="-100" max="100" placeholder="Eingabe" required />
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Bemerkung</td>
+            <td>
+                <input asp-for="Bemerkung" id="Bemerkung" type="text" name="Bemerkung" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div style="display:none" id="div1">Daten wurden gespeichert!</div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type=button onclick="pruefeEingabewerte()" value="Speichern" />
+            </td>
+        </tr>
+
+    </table>
+    <br>
+    <div class="DivLoadIndicator" id="Warte">
+        <div class="WarteText" style="font-size:10px">lade Temperaturen... </div>
+        <div id="medium-indicator"></div>
+    </div>
+    <br>
+
+</form>
+
+
+@section Scripts  {
+
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/jquery.preloaders.js"></script>
+    <script type="text/javascript">
+
+
+        @if (!String.IsNullOrEmpty((string)ViewBag.Message))            // prüfen ob VíewBag.Message leer ist, wenn ja nichts anzeigen
+        {
+            <text>
+            zeigeFehlermeldung('@ViewBag.Message');
+            </text>
+        }
+
+        var heute = @istHeute.ToString().ToLower();                     // Bool in Razor==True/False in JS==true/false
+
+        if (heute) {
+            $(document).ready(function () {
+                // Eingabe nach Zahlen u. Dezimalkomma filtern
+                $('#idZaehlerstand').on('keypress', function (event) {
+                    filterInput(',', $('#idZaehlerstand').val(), event);
+                    //alert(event.key);
+                });
+
+                $('#idZaehlerstand').on("blur", function () {
+                    if (!isNumber($(this).val())) {
+                        $(this).css('background-color', 'red');
+                    }
+                    else {
+                        $(this).css('background-color', 'white');
+                    }
+                })
+
+                // Eingabefeld bei falscher Eingabe rot
+                $('#idAussenTemp').on('blur', function () {
+                    if (!isNumber($(this).val())) {
+                        $(this).css('background-color', 'red');
+                    }
+                    else {
+                        $(this).css('background-color', 'white');
+                    }
+                })
+
+                // Eingabefeld bei falscher Eingabe rot
+                $('#idInnenTemp').on('blur', function () {
+                    if (!isNumber($(this).val())) {
+                        $(this).css('background-color', 'red');
+                    }
+                    else {
+                        $(this).css('background-color', 'white');
+                    }
+                })
+
+                $("#AussenTemp").prop("disabled", true);   // Eingabefeld sperren
+                $("#InnenTemp").prop("disabled", true);    // Eingabefeld sperren
+                console.debug("Dokument ist fertig!");
+
+                $("#medium-indicator").dxLoadIndicator({
+                    height: 40,
+                    width: 40
+                });
+                document.getElementById("Warte").hidden = false;
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("LeseLoxoneTemp", "Gas")',
+                    success: successFunc,
+                    error: errorFunc
+                });
+
+                function successFunc(result) {
+                    $("#AussenTemp").prop("disabled", false);   // Eingabefeld freigeben
+                    $("#InnenTemp").prop("disabled", false);    // Eingabefeld freigeben
+                    $("#InnenTemp").val(result.innentemperatur);
+                    $("#AussenTemp").val(result.aussentemperatur);
+
+                    // Verzögerung wird Spinner unsichtbar wird (500ms)
+                    setTimeout(function () {
+                        $("#medium-indicator").dxLoadIndicator({
+                            visible: true
+                        });
+                        document.getElementById("Warte").hidden = true;
+                    }, 500);
+                }
+
+                function errorFunc(result) {
+                    alert("keine Verbindung");
+                    console.debug("error");
+                }
+            });
+        }
+
+        // Prüfen der Eingabewerte
+        function pruefeEingabewerte() {
+
+            var zukunft = pruefeDatum(new Date(), $('#Ablesedatum').val());    // pruefen ob Ablesedatum > heute (new Date())
+            if (zukunft === true) {
+                return;
+            }
+
+            if (!isNumber($('#idZaehlerstand').val())) {
+                toastr.error("Zählerstand: Keine Zahl eingegeben " + "(" + $('#idZaehlerstand').val() + ")");
+                return;
+            }
+
+            if ($('#idZaehlerstand').val() <= 0) {
+                zeigeFehlermeldung("Zählerstand falsche Eingabe! " + $('#idZaehlerstand').val());
+                return;
+            }
+
+            if ($('#AussenTemp').val() < -100 || $('#AussenTemp').val() > 100) {
+                zeigeFehlermeldung("Aussentemperatur im falschen Bereich -100° < T < 100°!");
+                return;
+            }
+
+            if ($('#InnenTemp').val() < -100 || $('#InnenTemp').val() > 100) {
+                zeigeFehlermeldung("Innentemperatur im falschen Bereich -100° < T < 100°!");
+                return;
+            }
+
+            if ($('#idInnenTemp').val() == 99) {
+                $('#idInnenTemp').css('background-color', 'red');
+                toastr.error("Es sind noch nicht alle Werte oder falsche Werte eingegeben!");
+                return;
+            }
+
+            if ($('#idAussenTemp').val() == 99) {
+                $('#idAussenTemp').css('background-color', 'red');
+                toastr.error("Es sind noch nicht alle Werte oder falsche Werte eingegeben!");
+                return;
+            }
+
+            $('#form').submit();        // Daten posten
+
+        }
+    </script>
+}

@@ -1,0 +1,66 @@
+[33mcommit ca3f39944133b0f6534a0e8a0c1418ccde91f026[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: muegge <mmueggenburg@gmx.de>
+Date:   Sat Nov 6 14:45:42 2021 +0100
+
+    Controller/Model (Lulli) umbenannt
+
+[1mdiff --git a/Controllers/LulliController.cs b/Controllers/LulliController.cs[m
+[1mindex e0a44f7..852a681 100644[m
+[1m--- a/Controllers/LulliController.cs[m
+[1m+++ b/Controllers/LulliController.cs[m
+[36m@@ -15,7 +15,7 @@[m [mnamespace GWS_MVC.Controllers[m
+         }[m
+ [m
+         [HttpPost][m
+[31m-        public ActionResult SpeicherDaten(LulliModel model)[m
+[32m+[m[32m        public ActionResult SpeicherDaten(lulliModel model)[m
+         {[m
+ [m
+             return View("Index", model);[m
+[1mdiff --git a/Models/LulliModel.cs b/Models/LulliModel.cs[m
+[1mindex 08c3e9e..05ca9a9 100644[m
+[1m--- a/Models/LulliModel.cs[m
+[1m+++ b/Models/LulliModel.cs[m
+[36m@@ -5,7 +5,7 @@[m [musing System.Threading.Tasks;[m
+ [m
+ namespace GWS_MVC.Models[m
+ {[m
+[31m-    public class LulliModel[m
+[32m+[m[32m    public class lulliModel[m
+     {[m
+         public Double Zaehlerstand { get; set; }[m
+     }[m
+[1mdiff --git a/bin/Release/netcoreapp3.1/GWS_MVC.Views.dll b/bin/Release/netcoreapp3.1/GWS_MVC.Views.dll[m
+[1mindex b6c58ba..4ac2091 100644[m
+Binary files a/bin/Release/netcoreapp3.1/GWS_MVC.Views.dll and b/bin/Release/netcoreapp3.1/GWS_MVC.Views.dll differ
+[1mdiff --git a/bin/Release/netcoreapp3.1/GWS_MVC.Views.pdb b/bin/Release/netcoreapp3.1/GWS_MVC.Views.pdb[m
+[1mindex 8a7b75e..76d9591 100644[m
+Binary files a/bin/Release/netcoreapp3.1/GWS_MVC.Views.pdb and b/bin/Release/netcoreapp3.1/GWS_MVC.Views.pdb differ
+[1mdiff --git a/bin/Release/netcoreapp3.1/GWS_MVC.dll b/bin/Release/netcoreapp3.1/GWS_MVC.dll[m
+[1mindex 2f47c09..146fb1e 100644[m
+Binary files a/bin/Release/netcoreapp3.1/GWS_MVC.dll and b/bin/Release/netcoreapp3.1/GWS_MVC.dll differ
+[1mdiff --git a/bin/Release/netcoreapp3.1/GWS_MVC.pdb b/bin/Release/netcoreapp3.1/GWS_MVC.pdb[m
+[1mindex 5fdc4dd..2f74fac 100644[m
+Binary files a/bin/Release/netcoreapp3.1/GWS_MVC.pdb and b/bin/Release/netcoreapp3.1/GWS_MVC.pdb differ
+[1mdiff --git a/obj/Release/netcoreapp3.1/GWS_MVC.Views.dll b/obj/Release/netcoreapp3.1/GWS_MVC.Views.dll[m
+[1mindex b6c58ba..4ac2091 100644[m
+Binary files a/obj/Release/netcoreapp3.1/GWS_MVC.Views.dll and b/obj/Release/netcoreapp3.1/GWS_MVC.Views.dll differ
+[1mdiff --git a/obj/Release/netcoreapp3.1/GWS_MVC.Views.pdb b/obj/Release/netcoreapp3.1/GWS_MVC.Views.pdb[m
+[1mindex 8a7b75e..76d9591 100644[m
+Binary files a/obj/Release/netcoreapp3.1/GWS_MVC.Views.pdb and b/obj/Release/netcoreapp3.1/GWS_MVC.Views.pdb differ
+[1mdiff --git a/obj/Release/netcoreapp3.1/GWS_MVC.dll b/obj/Release/netcoreapp3.1/GWS_MVC.dll[m
+[1mindex 2f47c09..146fb1e 100644[m
+Binary files a/obj/Release/netcoreapp3.1/GWS_MVC.dll and b/obj/Release/netcoreapp3.1/GWS_MVC.dll differ
+[1mdiff --git a/obj/Release/netcoreapp3.1/GWS_MVC.pdb b/obj/Release/netcoreapp3.1/GWS_MVC.pdb[m
+[1mindex 5fdc4dd..2f74fac 100644[m
+Binary files a/obj/Release/netcoreapp3.1/GWS_MVC.pdb and b/obj/Release/netcoreapp3.1/GWS_MVC.pdb differ
+[1mdiff --git a/obj/Release/netcoreapp3.1/Razor/Views/Lulli/Index.cshtml.g.cs b/obj/Release/netcoreapp3.1/Razor/Views/Lulli/Index.cshtml.g.cs[m
+[1mindex 8cb7cc2..04b757d 100644[m
+[1m--- a/obj/Release/netcoreapp3.1/Razor/Views/Lulli/Index.cshtml.g.cs[m
+[1m+++ b/obj/Release/netcoreapp3.1/Razor/Views/Lulli/Index.cshtml.g.cs[m
+[36m@@ -42,7 +42,7 @@[m [musing GWS_MVC.Controllers;[m
+ #nullable disable[m
+     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"5adaed7c4fdedfa2499aebb9c0d5c467223fa781", @"/Views/Lulli/Index.cshtml")][m
+     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"df009ea5a7055ad4cba6d8926697307f052df91a", @"/Views/_ViewImports.cshtml")][m
+[31m-    public class Views_Lulli_Index : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<GWS_MVC.Models.LulliModel>[m
+[32m+[m[32m    public class Views_Lulli_Index 

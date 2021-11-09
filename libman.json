@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "node_modules/bootstrap/dist/js/bootstrap.min.js",
+      "provider": "filesystem",
+      "destination": "wwwroot/js/bootstrap"
+    },
+    {
+      "library": "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "provider": "filesystem",
+      "destination": "wwwroot/css/bootstrap"
+    },
+    {
+      "library": "node_modules/sweetalert2/dist/sweetalert2.min.css",
+      "provider": "filesystem",
+      "destination": "wwwroot/js/sweetalert2"
+    },
+    {
+      "library": "node_modules/jquery-validation/dist/jquery.validate.min.js",
+      "provider": "filesystem",
+      "destination": "wwwroot/js/jquery-validate"
+    }
+  ]
+}

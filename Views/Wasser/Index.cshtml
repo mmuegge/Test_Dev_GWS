@@ -1,0 +1,432 @@
+﻿<!-- Wasser-View -->
+@model GWS_MVC.Models.WasserModel;
+@using System.Globalization;
+@using GWS_MVC.Controllers;
+
+@{
+    ViewData["Title"] = "Wasser";
+    Boolean istHeute = Model.Ablesedatum.ToShortDateString() == DateTime.Now.ToShortDateString() ? true : false;    //prüfen ob akt. Ablesetag == DateTimeNow?
+    string datenGespeichert = (string)ViewBag.Datengespeichert;
+
+}
+
+@if (TempData["Success"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            console.debug("Toastr");
+            toastr.success("@TempData["Success"]");
+        };
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            console.debug("Toastr");
+            toastr.error("@TempData["Error"]");
+        };
+    </script>
+}
+
+<h1>Wasser</h1>
+
+<body class="dx-viewport">
+    <div class="demo-container">
+        <form id="form" action="@Url.Action("SpeicherDaten", "Wasser")" method="post">
+            <div class="dx-fieldset">
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Anbieter</b></div>
+                    <div class="dx-field-value">
+                        <div id="Anbieter" width="200px">
+                            @Html.DropDownListFor(m => m.Id, new SelectList(Model.AnbieterDaten, "Id", "Anbieter"), new { @name = "AnbieterDaten" })
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Ablesedatum</b></div>
+                    <div class="dx-field-value">
+                        <div id="idAblesedatum">
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Zählerstand</b></div>
+                    <div class="dx-field-value">
+                        <div id="idZaehlerstand"></div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Zählerstand aussen</b></div>
+                    <div class="dx-field-value">
+                        <div id="idZaehlerstand_aussen"></div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Uhrzeit</b></div>
+                    <div class="dx-field-value">
+                        <div id="Ableseuhrzeit">
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Aussentemperatur</b></div>
+                    <div class="dx-field-value">
+                        <div id="idAussenTemp"></div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Innentemperatur</b></div>
+                    <div class="dx-field-value">
+                        <div id="idInnenTemp"></div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-label"><b>Bemerkungen</b></div>
+                    <div class="dx-field-value">
+                        <div id="idBemerkung"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <div>
+                    <div id="normal-contained"></div>
+                </div>
+            </div>
+
+            <div class="DivLoadIndicator" id="Warte">
+                <div class="WarteText" style="font-size:10px">lade Temperaturen... </div>
+                <div id="medium-indicator"></div>
+            </div>
+
+            <br>
+
+        </form>
+    </div>
+</body>
+
+<!--<form method="post" action="@Url.Action("SpeicherDaten", "Wasser")" id="form">-->
+
+
+
+
+
+    @*<table>
+        <tr>
+            <td>Anbieter</td>
+            <td>
+                @Html.DropDownListFor(m => m.Id, new SelectList(Model.AnbieterDaten, "Id", "Anbieter"), new { @name = "AnbieterDaten" })
+            </td>
+        </tr>
+
+        <tr>
+            <td> Ablesedatum</td>
+            <td>
+                @(Html.TextBoxFor(m => m.Ablesedatum, "{0:yyyy-MM-dd}", new { id = "idAblesedatum", Name = "Ablesedatum", type = "date", required = "required" }))
+            </td>
+        </tr>
+
+        <tr>
+            <td>Zählerstand&nbsp[m3]&nbsp</td>
+            <td>
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div class="dx-field-value">
+                            <div id="idZaehlerstand" asp-for="Zaehlerstand"></div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Zählerstand aussen&nbsp[m3]&nbsp</td>
+            <td>
+                <input asp-for="Zaehlerstand_aussen" id="idZaehlerstand_aussen" value="" style="width:150px" pattern="\d*\," min="0.0" step="0.001" placeholder="Zählerstand" required />
+            </td>
+        </tr>
+
+        <tr>
+            <td>Uhrzeit</td>
+            <td>
+                @(Html.TextBoxFor(m => m.Ableseuhrzeit, "{0:HH:mm}", new { id = "Ableseuhrzeit", Name = "Ableseuhrzeit", type = "time", required = "required" }))
+            </td>
+        </tr>
+
+        <tr>
+            <td>Aussentemperatur&nbsp[°C]&nbsp</td>
+            <td>
+                <div id="idAussentemp">
+                    <input asp-for="Aussentemperatur" id="idAussenTemp" type="number" name="Aussentemperatur" pattern="\d*" min="-100" max="100" placeholder="Eingabe" required />
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Innentemperatur&nbsp[°C]&nbsp</td>
+            <td>
+                <div id="idInnentemp">
+                    <input asp-for="Innentemperatur" id="idInnenTemp" type="number" name="Innentemperatur" pattern="\d*" min="-100" max="100" placeholder="Eingabe" required />
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Bemerkung</td>
+            <td>
+                <input asp-for="Bemerkung" id="idBemerkung" type="text" name="Bemerkung" />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div style="display:none" id="div1">Daten wurden gespeichert!</div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type=button onclick="pruefeEingabewerte()" value="Speichern" />
+            </td>
+        </tr>
+
+    </table>
+    <br>*@
+
+   
+
+        @*<div class="DivLoadIndicator" id="Warte">
+            <div class="WarteText" style="font-size:10px">lade Temperaturen... </div>
+            <div id="medium-indicator"></div>
+        </div>
+
+        <br>
+
+</form>*@
+
+
+@section Scripts  {
+
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/jquery.preloaders.js"></script>
+
+    <script src="https://cdn3.devexpress.com/jslib/21.1.4/js/localization/dx.messages.de.js"></script>
+
+    <script type="text/javascript">
+
+        @if (!String.IsNullOrEmpty((string)ViewBag.Message))            // prüfen ob VíewBag.Message leer ist, wenn ja nichts anzeigen
+        {
+            <text>
+                zeigeFehlermeldung('@ViewBag.Message');
+            </text>
+        }
+
+        DevExpress.localization.locale("DE-de");
+       
+
+        var heute = @istHeute.ToString().ToLower();                     // Bool in Razor==True/False in JS==true/false
+        // Temperaturen nur Abrufen wenn Ablesetag == Heute
+        if (heute) {
+            $(document).ready(function () {
+
+                var jetzt = new Date();
+                var lulli;
+                var lulli2;
+
+                const number = 123.45;
+                console.log(new Intl.NumberFormat('de-DE').format(number));
+
+                $("#idZaehlerstand").dxNumberBox({
+                    name: "@Html.NameFor(m => m.Zaehlerstand)",
+                    value: 0.0,
+                    showClearButton: true,
+                    //format: "####0.000 m3",
+                    mode: "string",
+                    width: 200,
+                    min: 0,
+                    onValueChanged: function (data) {
+                        //lulli = String(data.value);
+                        //lulli2 = replaceDecimalPoint(lulli);
+                        //value = lulli2;
+                        var number = new Intl.NumberFormat('de-DE').format(data.value);
+                        console.log(number);
+                    },
+                }).dxValidator({
+                    validationRules: [{
+                        type: "required",
+                        message: "Zählerstand notwendig!"
+                    }, {
+                        type: "range",
+                        min: 1.1,
+                        message: "Zählerstand > 0"
+                    }]
+                });
+
+                $("#idZaehlerstand_aussen").dxNumberBox({
+                    name: "@Html.NameFor(m => m.Zaehlerstand_aussen)",
+                    value: 0,
+                    showClearButton: true,
+                    format: "####0.000 m3",
+                    mode: "decimal",
+                    width: 200,
+                    min: 0,
+                });
+
+                $("#idAblesedatum").dxDateBox({
+                    name: "@Html.NameFor(m => m.Ablesedatum)",
+                    placeholder: "01.01.2020",
+                    displayFormat: "dd.MM.yyyy",
+                    type: "date",
+                    value: jetzt
+                });
+
+                $("#Ableseuhrzeit").dxDateBox({
+                    name: "@Html.NameFor(m => m.Ableseuhrzeit)",
+                    showClearButton: true,
+                    type: "time",
+                    displayFormat: "HH:mm",
+                    value: jetzt
+                });
+
+                $("#idAussenTemp").dxNumberBox({
+                    name: "@Html.NameFor(m => m.Aussentemperatur)",
+                    value: 99,
+                    showClearButton: true,
+                    format: "### °C",
+                    mode: "decimal",
+                    width: 200,
+                    min: -100,
+                    readOnly: true,
+                });
+
+                $("#idInnenTemp").dxNumberBox({
+                    name: "@Html.NameFor(m => m.Innentemperatur)",
+                    value: 99,
+                    showClearButton: true,
+                    format: "### °C",
+                    mode: "decimal",
+                    width: 200,
+                    min: -100,
+                    readOnly: true,
+                });
+
+                $("#idBemerkung").dxTextBox({
+                    name: "@Html.NameFor(m => m.Bemerkung)",
+                    placeholder: "Kommentar",
+                    value: "",
+                });
+
+                $("#normal-contained").dxButton({
+                    stylingMode: "contained",
+                    //icon: 'fa fa-envelope-o',
+                    text: "Speichern",
+                    type: "normal",
+                    width: 120,
+                    onClick: function () {
+                        
+
+                        $('#form').submit();       // Daten posten
+                        //DevExpress.ui.notify("The Contained button was clicked");
+                        console.log($("#idZaehlerstand").dxNumberBox.name);
+                       //DevExpress.ui.notify($("#idZaehlerstand").dxNumberBox.value);
+                    }
+                });
+
+                $('#medium-indicator').dxLoadIndicator({
+                    height: 40,
+                    width: 40
+                })
+
+                document.getElementById('Warte').hidden = false;
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("LeseLoxoneTemp", "Wasser")',
+                    success: successFunc,
+                    error: errorFunc
+                })
+
+                function successFunc(result) {
+                    $("#idInnenTemp").dxNumberBox({
+                        value: result.innentemperatur,
+                        readOnly: false,
+                    });
+
+                    $("#idAussenTemp").dxNumberBox({
+                        value: result.aussentemperatur,
+                        readOnly: false,
+                    });
+
+                    // Verzögerung wird Spinner unsichtbar wird (500ms)
+                    setTimeout(function () {
+                        $("#medium-indicator").dxLoadIndicator({
+                            visible: true
+                        });
+                        document.getElementById("Warte").hidden = true;
+                    }, 500);
+                }
+
+                function errorFunc(result) {
+                    alert("keine Verbindung");
+                    console.debug("error");
+                }
+            })
+        }
+
+        // Prüfen aller Eingabewerte
+        //function pruefeEingabewerte() {
+        //    //console.debug("pruefeEingabewerte");
+        //    var zukunft = pruefeDatum(new Date(), $('#idAblesedatum').val());    // pruefen ob Ablesedatum > heute (new Date())
+        //    if (zukunft === true) {
+        //        return;
+        //    }
+
+        //    if (!isNumber($('#idZaehlerstand').val())) {
+        //        toastr.error("Zählerstand: Keine Zahl eingegeben " + "(" + $('#idZaehlerstand').val() + ")");
+        //        return;
+        //    }
+
+        //    if ($('#idZaehlerstand').val() <= 0) {
+        //        toastr.error("Zählerstand <= 0 " + "(" + $('#idZaehlerstand').val() + ")");
+        //        return;
+        //    }
+
+        //    if (!isNumber($('#idZaehlerstand_aussen').val())) {
+        //        toastr.error("Zählerstand aussen: Keine Zahl eingegeben " + "(" + $('#idZaehlerstand_aussen').val() + ")");
+        //        return;
+        //    }
+
+        //    if ($('#idZaehlerstand_aussen').val() <= 0) {
+        //        toastr.error("Zählerstand aussen <= 0 " + "(" + $('#idZaehlerstand_aussen').val() + ")");
+        //        return;
+        //    }
+
+        //    if ($('#idAussenTemp').val() < -100 || $('#idAussenTemp').val() > 100) {
+        //        $('#idAussenTemp').css('background-color', 'red');
+        //        toastr.error("Aussentemperatur im falschen Bereich -100° < T < 100°!");
+        //        return;
+        //    }
+
+        //    if ($('#idInnenTemp').val() < -100 || $('#idInnenTemp').val() > 100) {
+        //        $('#idInnenTemp').css('background-color', 'red');
+        //        toastr.error("Innentemperatur im falschen Bereich -100° < T < 100°!");
+        //        return;
+        //    }
+
+        //    if ($('#idInnenTemp').val() == 99) {
+        //        $('#idInnenTemp').css('background-color', 'red');
+        //        toastr.error("Es sind noch nicht alle Werte oder falsche Werte eingegeben!");
+        //        return;
+        //    }
+
+        //    if ($('#idAussenTemp').val() == 99) {
+        //        $('#idAussenTemp').css('background-color', 'red');
+        //        toastr.error("Es sind noch nicht alle Werte oder falsche Werte eingegeben!");
+        //        return;
+        //    }
+
+        //    $('#form').submit()       // Daten posten
+        //}
+    </script>
+}

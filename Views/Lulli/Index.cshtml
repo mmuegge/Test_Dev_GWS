@@ -1,0 +1,82 @@
+﻿
+@model GWS_MVC.Models.LulliModel;
+@using System.Globalization;
+@using GWS_MVC.Controllers;
+
+@*@using Newtonsoft.Json
+@using System.Threading
+
+@{
+    double testValueDouble = 1234.56789;
+    string testValueString = testValueDouble.ToString();
+    CultureInfo uiCultureInfo = Thread.CurrentThread.CurrentUICulture;
+    CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+}
+
+test value [serialized] = @(JsonConvert.SerializeObject(testValueDouble))
+test value [deserialized] = @(JsonConvert.DeserializeObject<double>(testValueString))
+ui culture = @(uiCultureInfo.DisplayName)
+culture = @(cultureInfo.DisplayName)*@
+
+<body class="dx-viewport">
+    <div class="demo-container">
+        <form id="form" action="@Url.Action("SpeicherDaten", "Lulli")" method="post">
+            <div class="dx-fieldset">
+                <div class="dx-field">
+                    <div class="dx-field-label">With spin and clear buttons</div>
+                    <div class="dx-field-value">
+                        <div id="zaehlerstand"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <div>
+                    <div id="normal-contained"></div>
+                </div>
+            </div>
+
+            <br>
+
+        </form>
+
+    </div>
+</body>
+
+@section Scripts  {
+
+
+    @*<script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+        <script src="https://cdn3.devexpress.com/jslib/21.2.3/js/dx.all.js"></script>
+        <script src="index.js"></script>*@
+
+    <script src="~/js/custom.js"></script>
+
+    <script src="https://cdn3.devexpress.com/jslib/21.1.4/js/localization/dx.messages.de.js"></script>
+
+    <script type="text/javascript">
+
+
+        $("#zaehlerstand").dxNumberBox({
+                name: "@Html.NameFor(m => m.Zaehlerstand)",
+                value: 0.0,
+                showSpinButtons: true,
+                showClearButton: true,
+            });
+
+            $("#normal-contained").dxButton({
+                stylingMode: "contained",
+                //icon: 'fa fa-envelope-o',
+                text: "Speichern",
+                type: "normal",
+                width: 120,
+                onClick: function () {
+                    console.log($("#zaehlerstand").dxNumberBox.value);
+                    $('#form').submit();       // Daten posten
+                }
+            });
+
+
+    </script>
+
+}
+
