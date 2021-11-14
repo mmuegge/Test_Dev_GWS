@@ -34,12 +34,12 @@
 
 <body class="dx-viewport">
     <div class="demo-container">
-        <form id="form" action="@Url.Action("SpeicherDaten", "Wasser")" method="post">
+        <form id="form" action="@Url.Action("SpeicherDaten", "Wasser")" method="post" style="width: 600px;">
             <div class="dx-fieldset">
                 <div class="dx-field">
                     <div class="dx-field-label"><b>Anbieter</b></div>
                     <div class="dx-field-value">
-                        <div id="Anbieter" width="200px">
+                        <div id="Anbieter">
                             @Html.DropDownListFor(m => m.Id, new SelectList(Model.AnbieterDaten, "Id", "Anbieter"), new { @name = "AnbieterDaten" })
                         </div>
                     </div>
@@ -207,7 +207,6 @@
 
 
 @section Scripts  {
-
     <script src="~/js/custom.js"></script>
     <script src="~/js/jquery.preloaders.js"></script>
 
@@ -243,7 +242,6 @@
                     showClearButton: true,
                     //format: "####0.000 m3",
                     mode: "string",
-                    width: 200,
                     min: 0,
                     onValueChanged: function (data) {
                         //lulli = String(data.value);
@@ -252,7 +250,8 @@
                         var number = new Intl.NumberFormat('de-DE').format(data.value);
                         console.log(number);
                     },
-                }).dxValidator({
+                })
+                 .dxValidator({
                     validationRules: [{
                         type: "required",
                         message: "Zählerstand notwendig!"
@@ -269,7 +268,6 @@
                     showClearButton: true,
                     format: "####0.000 m3",
                     mode: "decimal",
-                    width: 200,
                     min: 0,
                 });
 
@@ -295,7 +293,6 @@
                     showClearButton: true,
                     format: "### °C",
                     mode: "decimal",
-                    width: 200,
                     min: -100,
                     readOnly: true,
                 });
@@ -306,7 +303,6 @@
                     showClearButton: true,
                     format: "### °C",
                     mode: "decimal",
-                    width: 200,
                     min: -100,
                     readOnly: true,
                 });
@@ -430,3 +426,9 @@
         //}
     </script>
 }
+
+<style>
+    .dx-field {
+        width: 100%;
+    }
+</style>
