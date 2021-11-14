@@ -25,7 +25,8 @@ namespace GWS_MVC
             {
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +48,7 @@ namespace GWS_MVC
 
             // Dezimaltrenner Javascript DevExpress
             var cultureInfo = new CultureInfo("en-US");
-            cultureInfo.NumberFormat.CurrencySymbol = "€";
+            cultureInfo.NumberFormat.CurrencySymbol = "ï¿½";
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
